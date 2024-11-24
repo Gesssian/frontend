@@ -43,7 +43,7 @@ export default defineConfig({
         host: host || false,
         proxy: {
             "/api": {
-                target: "http://192.168.1.73:8000"
+                target: "http://192.168.67.67:8000"
             }
         },
         watch: {
