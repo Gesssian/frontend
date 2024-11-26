@@ -21,8 +21,9 @@ const manifestForPlugin: Partial<VitePWAOptions> = {
                 src: 'pwa-512x512.png',
                 sizes: '512x512',
                 type: 'image/png'
-            }
-        ]
+            },
+        ],
+        display: 'standalone',
     }
 };
 
