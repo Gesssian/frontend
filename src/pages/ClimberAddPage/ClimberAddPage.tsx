@@ -72,7 +72,7 @@ const ClimberAddPage = () => {
                 <Col md={6}>
                     <CustomInput label="Название" placeholder="Введите название" value={name} setValue={setName}/>
                     <CustomTextarea label="Описание" placeholder="Введите описание" value={description} setValue={setDescription}/>
-                    <CustomInput label="Покорил" placeholder="Введите цену" value={peak} setValue={setPeak}/>
+                    <CustomInput label="Покорил" placeholder="Введите название" value={peak} setValue={setPeak}/>
                     <Col className="d-flex justify-content-center gap-5 mt-5">
                         <Button color="success" className="fs-4" onClick={handleCreateClimber}>Создать</Button>
                     </Col>

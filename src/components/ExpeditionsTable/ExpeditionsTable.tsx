@@ -1,111 +1,70 @@
-import {useNavigate} from "react-router-dom";
-import {useMemo} from "react";
-import {formatDate} from "src/utils/utils.ts";
-import CustomTable from "components/CustomTable/CustomTable.tsx";
-import {useAppDispatch, useAppSelector} from "store/store.ts";
-import {Button} from "reactstrap";
-import {Expedition} from "src/api/Api.ts";
-import {acceptExpedition, fetchExpeditions, rejectExpedition} from "store/slices/expeditionsSlice.ts";
+import {useAppSelector} from "store/store.ts";
+import {Card, Col, Row} from "reactstrap";
+import ExpeditionCard from "components/ExpeditionCard/ExpeditionCard.tsx";
+import {T_Expedition} from "modules/types.ts";
+import "./ExpeditionTable.css"
 
 type Props = {
-    expeditions:Expedition[]
+    expeditions:T_Expedition[]
 }
 
 const ExpeditionsTable = ({expeditions}:Props) => {
 
     const {is_superuser} = useAppSelector((state) => state.user)
 
-    const navigate = useNavigate()
-
-    const dispatch = useAppDispatch()
-
-    const handleClick = (expedition_id) => {
-        navigate(`/expeditions/${expedition_id}`)
-    }
-
-    const handleAcceptExpedition = async (expedition_id) => {
-        await dispatch(acceptExpedition(expedition_id))
-        await dispatch(fetchExpeditions())
-    }
-
-    const handleRejectExpedition = async (expedition_id) => {
-        await dispatch(rejectExpedition(expedition_id))
-        await dispatch(fetchExpeditions())
-    }
-
-    const STATUSES = {
-        1: "Черновик",
-        2: "В работе",
-        3: "Завершен",
-        4: "Отменён",
-        5: "Удалён"
-    }
-
-    const columns = useMemo(
-        () => [
-            {
-                Header: '№',
-                accessor: 'id',
-            },
-            {
-                Header: 'Статус',
-                accessor: 'status',
-                Cell: ({ value }) => STATUSES[value]
-            },
-            {
-                Header: 'Дата',
-                accessor: 'date',
-                Cell: ({ value }) => formatDate(value, {
-                    year: "numeric",
-                    month: "long",
-                    day: "numeric"
-                })
-            },
-            {
-                Header: 'Дата создания',
-                accessor: 'date_created',
-                Cell: ({ value }) => formatDate(value)
-            },
-            {
-                Header: 'Дата формирования',
-                accessor: 'date_formation',
-                Cell: ({ value }) => formatDate(value)
-            },
-            {
-                Header: 'Дата завершения',
-                accessor: 'date_complete',
-                Cell: ({ value }) => formatDate(value)
-            }
-        ],
-        []
-    )
-
-    if (is_superuser) {
-        columns.push(
-            {
-                Header: "Пользователь",
-                accessor: "owner",
-                Cell: ({ value }) => value
-            },
-            {
-                Header: "Действие",
-                accessor: "accept_button",
-                Cell: ({ cell }) => (
-                    cell.row.values.status == 2 && <Button color="primary" onClick={() => handleAcceptExpedition(cell.row.values.id)}>Принять</Button>
-                )
-            },
-            {
-                Header: "Действие",
-                accessor: "decline_button",
-                Cell: ({ cell }) => (
-                    cell.row.values.status == 2 && <Button color="danger" onClick={() => handleRejectExpedition(cell.row.values.id)}>Отклонить</Button>
-                )
-            }
-        )
-    }
-
     return (
-        <CustomTable columns={columns} data={expeditions} onClick={handleClick}/>
+        <div className="mb-5">
+            <div className="mb-2" style={{fontWeight: "bold"}}>
+                <Card style={{padding: "10px"}}>
+                    <Row>
+                        <Col md={1}>
+                            №
+                        </Col>
+                        <Col md={1}>
+                            Статус
+                        </Col>
+                        <Col md={1}>
+                            Стоимость
+                        </Col>
+                        <Col md={1}>
+                            Дата
+                        </Col>
+                        <Col>
+                            Дата создания
+                        </Col>
+                        <Col>
+                            Дата формирования
+                        </Col>
+                        <Col>
+                            Дата завершения
+                        </Col>
+                        {!is_superuser &&
+                            <Col>
+                                Действие
+                            </Col>
+                        }
+                        {is_superuser &&
+                            <>
+                                <Col>
+                                    Пользователь
+                                </Col>
+                                <Col>
+                                    Действие
+                                </Col>
+                                <Col>
+                                    Действие
+                                </Col>
+                            </>
+                        }
+                    </Row>
+                </Card>
+            </div>
+            <div className="d-flex flex-column gap-2">
+                {expeditions.map((expedition, index) => (
+                    <ExpeditionCard expedition={expedition} index={index} key={index}/>
+                ))}
+            </div>
+        </div>
     )
 };
 
